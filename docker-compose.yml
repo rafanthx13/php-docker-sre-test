@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  php-app:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - ./logs:/var/log/php5-app
+    depends_on:
+      - fluent-bit
+      - prometheus
+    networks:
+      - app-network
+  fluent-bit:
+    image: fluent/fluent-bit:latest
+    volumes:
+      - ./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - ./logs:/var/log/php5-app
+    ports:
+      - "2020:2020"
+    networks:
+      - app-network
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - app-network
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

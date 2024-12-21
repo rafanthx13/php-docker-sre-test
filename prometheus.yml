@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'php-app'
+    static_configs:
+      - targets: ['php-app:80']  # Usando a porta 80, pois o PHP está exposto nessa porta dentro do contêiner
+  - job_name: 'metrics'
+    metrics_path: /metrics/prometheus.php
+    static_configs:
+      - targets: ['php-app:80']  # Usando a porta 80 aqui também
